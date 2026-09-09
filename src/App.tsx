@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { OccasionType, ToneType, type LanguageType } from "./types";
-import { LANGUAGES } from "./constants";
 import { generateGreeting } from "./services/geminiService";
 import { Header } from "./components/Header";
 import { AppTitle } from "./components/AppTitle";
 import { OccasionButton } from "./components/OccasionButton";
-import { Cake, Snowflake } from "lucide-react";
+import { Cake, Snowflake, Sparkles } from "lucide-react";
 import { UserDetailsSection } from "./components/UserDetailsSection";
+import { ExtraDetailsSection } from "./components/ExtraDetailsSection";
+import { GenerateButton } from "./components/GenerateButton";
+import { ResultSection } from "./components/ResultSection";
 
 function App() {
   const [occasion, setOccasion] = useState<OccasionType>(OccasionType.BIRTHDAY);
@@ -51,7 +53,7 @@ function App() {
           <AppTitle />
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
-            <div className="lg:col-span-5 space-y-10">
+            <div className="lg:col-span-5 sm:space-y-10 space-y-8">
               <section className="space-y-4">
                 <div className="flex justify-between items-center">
                   <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
@@ -88,31 +90,25 @@ function App() {
                 setError={setError}
                 setInterests={setInterests}
               />
+
+              <ExtraDetailsSection
+                error={error}
+                language={language}
+                selectedTone={tone}
+                setTone={setTone}
+                setLanguage={setLanguage}
+              />
+
+              <GenerateButton isLoading={loading} onClick={handleGenerate}>
+                <Sparkles className={`w-5 h-5 ${loading ? "animate-spin" : "group-hover:animate-pulse"}`} />
+                {loading ? "Сочиняем..." : "Сгенерировать"}
+              </GenerateButton>
             </div>
 
-            <div className="lg:col-span-7 h-full">2</div>
+            <div className="lg:col-span-7 h-full">
+              <ResultSection content={generatedText} isLoading={loading} />
+            </div>
           </div>
-
-          <br />
-          {Object.values(ToneType).map((tone) => (
-            <button key={tone} onClick={() => setTone(tone)}>
-              {tone}
-            </button>
-          ))}
-          <br />
-          <select value={language} onChange={(e) => setLanguage(e.target.value as LanguageType)}>
-            {LANGUAGES.map((lang) => (
-              <option value={lang} key={lang}>
-                {lang}
-              </option>
-            ))}
-          </select>
-
-          <hr />
-
-          <button onClick={handleGenerate} disabled={loading}>
-            СОЗДАТЬ МАГИЮ
-          </button>
         </div>
       </main>
     </div>

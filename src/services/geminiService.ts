@@ -51,7 +51,7 @@ export const generateGreeting = async (
     }
   } catch (error) {
     console.error("Gemini text API error", error);
-    throw new Error("[generateGreeting] Ошибка генерации", {
+    throw new Error("Ошибка генерации", {
       cause: error,
     });
   }
