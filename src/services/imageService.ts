@@ -9,6 +9,7 @@ export const generateGreetingImage = async (occasion: OccasionType, tone: ToneTy
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
+      type: "image",
       occasion,
       tone,
       interests,
