@@ -1,12 +1,13 @@
-import { Check, Copy, ImageIcon, Sparkles } from "lucide-react";
+import { Check, Copy, Download, ImageIcon, Sparkles } from "lucide-react";
 import { useState, type FC } from "react";
 
 interface IResultSectionProps {
   content: string;
+  image: string | null;
   isLoading: boolean;
 }
 
-export const ResultSection: FC<IResultSectionProps> = ({ content, isLoading }) => {
+export const ResultSection: FC<IResultSectionProps> = ({ content, image, isLoading }) => {
   const [copied, setCopied] = useState<boolean>(false);
 
   const handleCopy = async (): Promise<void> => {
@@ -19,6 +20,15 @@ export const ResultSection: FC<IResultSectionProps> = ({ content, isLoading }) =
     } catch (error) {
       console.error("Ошибка копирования текста: ", error);
     }
+  };
+
+  const handleDownload = (): void => {
+    if (!image) return;
+
+    const link = document.createElement("a");
+    link.href = image;
+    link.download = "greeting-card.png";
+    link.click();
   };
 
   return (
@@ -48,6 +58,23 @@ export const ResultSection: FC<IResultSectionProps> = ({ content, isLoading }) =
             <div className="prose prose-purple max-w-none">
               <p className="text-gray-700 text-lg leading-relaxed whitespace-pre-wrap">{content}</p>
             </div>
+
+            {image && (
+              <div className="space-y-3">
+                <div className="overflow-hidden rounded-2xl">
+                  <img src={image} alt="Сгенерированная поздравительная открытка" className="w-full h-auto rounded-2xl" />
+                </div>
+
+                <button
+                  onClick={handleDownload}
+                  className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-purple-50 text-purple-600 font-medium hover:bg-purple-100 transition-colors"
+                  title="Скачать изображение"
+                >
+                  <Download className="w-5 h-5" />
+                  Скачать изображение
+                </button>
+              </div>
+            )}
           </div>
         ) : (
           <div className="grow flex flex-col items-center justify-center text-center p-8 border-2 border-dashed border-gray-100 rounded-2xl">

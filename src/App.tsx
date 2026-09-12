@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { OccasionType, ToneType, type LanguageType } from "./types";
 import { generateGreeting } from "./services/geminiService";
+import { generateGreetingImage } from "./services/imageService";
 import { Header } from "./components/Header";
 import { AppTitle } from "./components/AppTitle";
 import { OccasionButton } from "./components/OccasionButton";
@@ -21,21 +22,27 @@ function App() {
   const [generatedText, setGeneratedText] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [generatedImage, setGeneratedImage] = useState<string | null>(null);
 
   const handleGenerate = async (): Promise<void> => {
     if (!name.trim()) {
-      setError("Пожалуйства введите имя!");
+      setError("Пожалуйста, введите имя!");
       return;
     }
 
     setError(null);
     setLoading(true);
     setGeneratedText("");
+    setGeneratedImage(null);
 
     try {
       const result = await generateGreeting(occasion, name, age, interests, tone, language);
 
       setGeneratedText(result);
+
+      const image = await generateGreetingImage(occasion, tone, interests);
+
+      setGeneratedImage(image);
     } catch (error: any) {
       setError(error.message || "Произошла ошибка");
     } finally {
@@ -47,7 +54,21 @@ function App() {
     <div className="min-h-screen bg-[#faf5ff]">
       <Header />
 
-      {error}
+      {error && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+          <div className="flex items-start gap-3 rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-red-700">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-red-100">
+              <span className="text-lg">!</span>
+            </div>
+
+            <div>
+              <p className="font-semibold">Не удалось сгенерировать поздравление</p>
+              <p className="mt-1 text-sm text-red-600">{error}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         <div className="max-w-7xl mx-auto">
           <AppTitle />
@@ -106,7 +127,7 @@ function App() {
             </div>
 
             <div className="lg:col-span-7 h-full">
-              <ResultSection content={generatedText} isLoading={loading} />
+              <ResultSection content={generatedText} image={generatedImage} isLoading={loading} />
             </div>
           </div>
         </div>
