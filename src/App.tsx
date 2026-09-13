@@ -18,6 +18,7 @@ function App() {
   const [interests, setInterests] = useState<string>("");
   const [tone, setTone] = useState<ToneType>(ToneType.FRIENDLY);
   const [language, setLanguage] = useState<LanguageType>("Русский");
+  const [generateImage, setGenerateImage] = useState<boolean>(true);
 
   const [generatedText, setGeneratedText] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
@@ -40,9 +41,11 @@ function App() {
 
       setGeneratedText(result);
 
-      const image = await generateGreetingImage(occasion, tone, interests);
+      if (generateImage) {
+        const image = await generateGreetingImage(occasion, tone, interests);
 
-      setGeneratedImage(image);
+        setGeneratedImage(image);
+      }
     } catch (error: any) {
       setError(error.message || "Произошла ошибка");
     } finally {
@@ -116,8 +119,10 @@ function App() {
                 error={error}
                 language={language}
                 selectedTone={tone}
+                generateImage={generateImage}
                 setTone={setTone}
                 setLanguage={setLanguage}
+                setGenerateImage={setGenerateImage}
               />
 
               <GenerateButton isLoading={loading} onClick={handleGenerate}>

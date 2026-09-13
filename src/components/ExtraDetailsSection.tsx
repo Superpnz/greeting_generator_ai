@@ -1,4 +1,4 @@
-import { Globe } from "lucide-react";
+import { Globe, Image } from "lucide-react";
 import { type Dispatch, type FC, type SetStateAction } from "react";
 import type { LanguageType, ToneType } from "../types";
 import { LANGUAGES } from "../constants";
@@ -8,17 +8,61 @@ interface IExtraDetailsSectionProps {
   error: string | null;
   language: string;
   selectedTone: ToneType;
+  generateImage: boolean;
   setTone: Dispatch<SetStateAction<ToneType>>;
   setLanguage: Dispatch<SetStateAction<LanguageType>>;
+  setGenerateImage: Dispatch<SetStateAction<boolean>>;
 }
 
-export const ExtraDetailsSection: FC<IExtraDetailsSectionProps> = ({ error, language, selectedTone, setLanguage, setTone }) => {
+export const ExtraDetailsSection: FC<IExtraDetailsSectionProps> = ({
+  error,
+  language,
+  selectedTone,
+  generateImage,
+  setLanguage,
+  setTone,
+  setGenerateImage,
+}) => {
   return (
     <section className="space-y-4">
       <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
         <span className="flex items-center justify-center w-6 h-6 rounded-full bg-gray-900  text-white text-xs">3</span>
         Настройки
       </h3>
+
+      <label
+        className={`group flex items-center justify-between rounded-xl border-2 px-4 py-3 cursor-pointer transition-all duration-200 ${
+          generateImage
+            ? "border-purple-400 bg-purple-50/70"
+            : "border-gray-100 bg-white hover:border-purple-200 hover:bg-purple-50/30"
+        }`}
+      >
+        <div className="flex items-center gap-3">
+          <div
+            className={`flex items-center justify-center w-8 h-8 rounded-lg transition-colors ${
+              generateImage
+                ? "bg-purple-100 text-purple-600"
+                : "bg-gray-100 text-gray-400 group-hover:bg-purple-100 group-hover:text-purple-500"
+            }`}
+          >
+            <Image className="w-4 h-4" />
+          </div>
+
+          <span className={`text-sm font-medium transition-colors ${generateImage ? "text-purple-700" : "text-gray-700"}`}>
+            Сгенерировать картинку
+          </span>
+        </div>
+
+        <input type="checkbox" checked={generateImage} onChange={(e) => setGenerateImage(e.target.checked)} className="sr-only" />
+
+        <div className={`relative w-10 h-5 rounded-full transition-colors ${generateImage ? "bg-purple-500" : "bg-gray-200"}`}>
+          <div
+            className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow-sm transition-transform ${
+              generateImage ? "translate-x-5" : "translate-x-0.5"
+            }`}
+          />
+        </div>
+      </label>
 
       <ToneSelector selectedTone={selectedTone} setTone={setTone} />
 
